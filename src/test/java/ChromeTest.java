@@ -1,7 +1,9 @@
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -29,7 +32,7 @@ public class ChromeTest {
         System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         ChromeOptions options = new ChromeOptions();
-        
+
         options.addExtensions(new File("chrome_plugin/extension_1_0_5.crx"));
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
         driver = new ChromeDriver(capabilities);
@@ -39,7 +42,7 @@ public class ChromeTest {
     }
 
     @Test
-    public void OpenBrowser(){
+    public void OpenBrowser() throws InterruptedException {
 
         driver.get("https://www.google.com/");
         GooglePage googlePage = PageFactory.initElements(driver,GooglePage.class);
@@ -48,6 +51,22 @@ public class ChromeTest {
         WebElement result = wait.
                 until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[id='resultStats']")));
         LOGGER.warning(result.getText());
+    }
+
+    @Test
+    public void WaveTest() throws InterruptedException {
+
+        driver.get("https://www.google.com/");
+        GooglePage googlePage = PageFactory.initElements(driver,GooglePage.class);
+        googlePage.setValue("MNTU");
+        WebDriverWait wait = new WebDriverWait(driver,30);
+        WebElement result = wait.
+                until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[id='resultStats']")));
+        LOGGER.warning(result.getText());
+        JavascriptExecutor js = (JavascriptExecutor)driver;
+        js.executeScript(Constants.WAVE_SCRIPT);
+        List<WebElement> errors = driver.findElements(By.cssSelector("img[alt*='ERRORS']"));
+        Assert.assertEquals(errors.size(),0);
     }
 
     @After

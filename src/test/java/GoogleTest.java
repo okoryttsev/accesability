@@ -27,7 +27,7 @@ public class GoogleTest {
     }
 
     @Test
-    public void OpenBrowser(){
+    public void OpenBrowser() throws InterruptedException {
         driver.get("https://www.google.com/");
         GooglePage googlePage = PageFactory.initElements(driver,GooglePage.class);
         googlePage.setValue("MNTU");
@@ -35,10 +35,12 @@ public class GoogleTest {
         WebElement result = wait.
                 until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div[id='resultStats']")));
         LOGGER.warning(result.getText());
+
     }
 
     @After
     public void CloseAll(){
         driver.close();
+        driver.quit();
     }
 }
